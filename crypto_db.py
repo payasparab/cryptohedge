@@ -2,6 +2,7 @@ import pandas as pd
 import pystore
 import os
 import numpy as np
+from cryptohedge_config import kraken_api_key, pystore_path_local, raw_data_path_local
 
 pystore_path_local =  os.path.dirname(os.path.abspath(__file__)) + '\\pystore'
 raw_data_path_local = os.path.dirname(os.path.abspath(__file__)) + '\\raw_data'
