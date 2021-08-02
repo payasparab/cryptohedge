@@ -1,10 +1,11 @@
 import pandas as pd 
 import pystore
 import os
-import datetime
+from datetime import datetime
 import numpy as np
-from cryptohedge_config import kraken_api_key, pystore_path_local, raw_data_path_local
-
+from cryptohedge_config import pystore_path_local, raw_data_path_local
+import krakenex
+from pykrakenapi import KrakenAPI
 
 class CryptoDB:
     '''
@@ -30,11 +31,16 @@ class CryptoDB:
         ): 
     
         pystore.set_path(pystore_path)
+        api = krakenex.API()
+        api.load_key('lowkey.txt')
+        self.kraken_api = KrakenAPI(api)
+
         self.pystore_path = pystore.get_path()
         self.raw_data_path = raw_data_path
         self.store = pystore.store('CryptoDB')
+        self.pairs = self.kraken_api.get_tradable_asset_pairs()
 
-    def process_csv(file_name): 
+    def process_csv(self, file_name): 
         '''
         Name: process_csv
 
@@ -42,12 +48,26 @@ class CryptoDB:
             file_name: str : raw csv file name stored in
 
         Returns: 
-            - pd.DataFrame: 
-                > contains 
+            - pd.DataFrame: with cols: 
+                > timestamp 
+                > 
+
         '''
-        pd.
+        # Pull in file #
+        full_path = self.raw_data_path + '\\' + file_name
+        cols = ['timestamp', 'price', 'volume']
+        data = pd.read_csv(full_path, names=cols, header=None)
+        
+        # Process Dates #
+        data['timestamp'] = pd.to_datetime(data['timestamp'].apply(
+                lambda x: datetime.fromtimestamp(x)))
+
+        
+        return data
+        
+
 
 # Function Read CSV and Convert to Data Frame #
-pd.to_datetime(datetime.fromtimestamp())
+
 
 # Function to Calculate Volume Weighted Price takes in time period #
