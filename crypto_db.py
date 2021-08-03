@@ -39,7 +39,7 @@ class CryptoDB:
         self.raw_data_path = raw_data_path
         self.store = pystore.store('CryptoDB')
         self.pairs = self.kraken_api.get_tradable_asset_pairs()
-        self.assetcodes = pd.read_csv('assetcode_key.csv')
+        self.assetcodes = pd.read_csv('assetcode_key.csv').set_index('asset_code')
 
     def process_csv(self, file_name): 
         '''
@@ -66,7 +66,17 @@ class CryptoDB:
                 lambda x: datetime.fromtimestamp(x)))
 
         # Asset Code Processing #
-        
+        _pairs_cut = self.pairs.loc[pair_code]
+        data['crypto'] = _pairs_cut['wsname'].split('/')[0]
+        data['cash'] = _pairs_cut['wsname'].split('/')[1]
+        data['crypto_name'] = data.crypto.apply(
+                                     lambda x:
+                                    self.assetcodes.loc[x]
+                                )
+        data['cash_name'] = data.cash.apply(
+                                    lambda x:
+                                    self.assetcodes.loc[x]
+                                )
 
         return data
         
