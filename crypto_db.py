@@ -50,7 +50,10 @@ class CryptoDB:
         database. 
         '''
         files_lst = os.listdir(self.raw_data_path)
-        files_lst = [f for f in files_lst if (('USD' in f) and ('USDT' not in  f))] 
+        files_lst = [f for f in files_lst if (
+                ('USD' in f) 
+                and ('USDT' not in  f) 
+                and ('USDC' not in f))] 
         failed = []
         for _file in tqdm(files_lst):
             try: 
@@ -68,14 +71,13 @@ class CryptoDB:
                                     ).reset_index().asset_name
 
             
-            if _cryptoname not in self.store.collection('transactions').list_items():
-                try: 
-                    self.store.collection(
-                        'transactions').write(
-                                _cryptoname, _df, overwrite=True
-                        )
-                except:
-                    failed.append('Pystore_fail: {}'.format(_file))
+            try: 
+                self.store.collection(
+                    'transactions').write(
+                            _cryptoname, _df, overwrite=True
+                    )
+            except:
+                failed.append('Pystore_fail: {}'.format(_file))
 
         print('The following tickers failed: {}'.format(
             failed
@@ -137,5 +139,7 @@ class CryptoDB:
         else:
             return _item.to_pandas(parse_dates=False)
         
+
+
 if __name__ == '__main__': 
     cdb = CryptoDB()
