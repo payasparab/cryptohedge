@@ -68,10 +68,14 @@ class CryptoDB:
                                     ).reset_index().asset_name
 
             
-            self.store.collection(
-                'transactions').write(
-                        _cryptoname, _df, 
-                )
+            if _cryptoname not in self.store.collection('transactions').list_items():
+                try: 
+                    self.store.collection(
+                        'transactions').write(
+                                _cryptoname, _df, overwrite=True
+                        )
+                except:
+                    failed.append('Pystore_fail: {}'.format(_file))
 
         print('The following tickers failed: {}'.format(
             failed
@@ -105,6 +109,7 @@ class CryptoDB:
         _pairs_cut = self.pairs.loc[pair_code]
         data['crypto'] = _pairs_cut['base']
         data['cash'] = _pairs_cut['quote']
+
 
         return data
         
