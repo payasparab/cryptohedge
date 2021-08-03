@@ -111,4 +111,4 @@ class CryptoDB:
 
 if __name__ == '__main__': 
     cdb = CryptoDB()
-    cdb.load_raw_data(filter_curr='USD')
+    cdb.load_raw_data()
