@@ -50,28 +50,28 @@ class CryptoDB:
         database. 
         '''
         files_lst = os.listdir(self.raw_data_path)
-        dfs = []
-        print('Loading raw files into Pystore - transactions!')
+        files_lst = [f for f in files_lst if (('USD' in f) and ('USDT' not in  f))] 
         failed = []
         for _file in tqdm(files_lst):
             try: 
                 _df = self._process_csv(_file)
-                dfs.append(_df)
             except KeyError:
                 failed.append(_file)
-        
-        transactions = pd.concat(dfs)
+            
+            _df['crypto_name'] = _df.set_index('crypto').join(
+                                        self.assetcodes.asset_name
+                                    ).reset_index().asset_name
+            
+            _cryptoname = _df.crypto_name.iloc[0]
+            _df['cash_name'] = _df.set_index('cash').join(
+                                        self.assetcodes.asset_name
+                                    ).reset_index().asset_name
 
-        transactions['crypto_name'] = transactions.set_index('crypto').join(
-                                    self.assetcodes.asset_name
-                                ).reset_index()
-        transactions['cash_name'] = transactions.set_index('cash').join(
-                                    self.assetcodes.asset_name
-                                ).reset_index()
-        self.store.collection(
-            'kraken_data').write(
-                    'transactions', transactions, 
-            )
+            
+            self.store.collection(
+                'transactions').write(
+                        _cryptoname, _df, 
+                )
 
         print('The following tickers failed: {}'.format(
             failed
@@ -106,10 +106,9 @@ class CryptoDB:
         data['crypto'] = _pairs_cut['base']
         data['cash'] = _pairs_cut['quote']
 
-
         return data
         
 
 if __name__ == '__main__': 
     cdb = CryptoDB()
-    cdb.load_raw_data()
+    cdb.load_raw_data(filter_curr='USD')
