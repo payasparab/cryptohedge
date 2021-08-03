@@ -62,14 +62,12 @@ class CryptoDB:
         
         transactions = pd.concat(dfs)
 
-        transactions['crypto_name'] = transactions.crypto.apply(
-                                     lambda x:
-                                    self.assetcodes.asset_name.loc[x]
-                                )
-        transactions['cash_name'] = transactions.cash.apply(
-                                    lambda x:
-                                    self.assetcodes.asset_name.loc[x]
-                                )
+        transactions['crypto_name'] = transactions.set_index('crypto').join(
+                                    self.assetcodes.asset_name
+                                ).reset_index()
+        transactions['cash_name'] = transactions.set_index('cash').join(
+                                    self.assetcodes.asset_name
+                                ).reset_index()
         self.store.collection(
             'kraken_data').write(
                     'transactions', transactions, 
