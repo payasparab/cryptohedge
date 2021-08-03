@@ -114,6 +114,31 @@ class CryptoDB:
         return data
         
 
+    def query(self, db, coin, return_dask=False):
+        '''
+        Args: 
+
+            coin : str : can contain asset_name or asset_code or werd exceptions
+        ''' 
+        if db not in self.store.list_collections(''): 
+            print('Invalid collection argument'.format(db))
+        
+        if coin in self.assetcodes.index: 
+            search_term = self.assetcodes.asset_name[coin]
+            _item = self.store.collection(db).item(search_term)
+        elif coin in cdb.asset_name:
+            _item = self.store.collection(db).item(coin)
+        else: 
+            print('Invalid coin argument: {}'.format(coin))
+
+        if return_dask:
+            return _item.data
+        else:
+            return _item.to_pandas(parse_dates=False)
+        
+
+
+
 if __name__ == '__main__': 
     cdb = CryptoDB()
     cdb.load_raw_data()
