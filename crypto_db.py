@@ -104,8 +104,8 @@ class CryptoDB:
         data['pair_code'] = pair_code
         
         # Process Dates #
-        data['timestamp'] = pd.to_datetime(data['timestamp'].apply(
-                lambda x: datetime.fromtimestamp(x)))
+
+
 
         # Asset Code Processing #
         _pairs_cut = self.pairs.loc[pair_code]
