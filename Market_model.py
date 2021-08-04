@@ -27,12 +27,14 @@ def slippage_moment(ticker, order_type, amount):
     cols = ['price', 'volume', 'timestamp']
     ask_df = pd.DataFrame(asks, columns=cols)
     bid_df = pd.DataFrame(bids, columns=cols)
+    ask_df[['price', 'volume']] = ask_df[['price', 'volume']].astype('float') 
+    bid_df[['price', 'volume']] = bid_df[['price', 'volume']].astype('float')   
 
     ask_df['vw_price'] = ask_df.apply(
             lambda x: (x.price.dot(x.volume))/(x.volume.sum())
         )
     bid_df['vw_price'] = bid_df.apply(
-            lambda x: (x.price.dot(x.volume))/(x.volume.sum()), axis=1
+            lambda x: (x.price.dot(x.volume))/(x.volume.sum())
         )
 
     ask_df['timestamp'] = pd.to_datetime(ask_df['timestamp'].apply(
@@ -41,11 +43,7 @@ def slippage_moment(ticker, order_type, amount):
     bid_df['timestamp'] = pd.to_datetime(bid_df['timestamp'].apply(
         lambda x: datetime.fromtimestamp(x)))
 
-    ask_df[['price', 'volume']] = ask_df[['price', 'volume']].astype('float') 
-    bid_df[['price', 'volume']] = bid_df[['price', 'volume']].astype('float')   
-    ask_df = ask_df.sort_values('timestamp')
-    bid_df = bid_df.sort_values('timestamp')
-    
+
     ask_df['cumul_volume'] = ask_df.volume.cumsum()
     bid_df['cumul_volume'] = bid_df.volume.cumsum()
 
@@ -79,7 +77,7 @@ def slippage_moment(ticker, order_type, amount):
 
     else: 
         # Sell
-        order_book_max  = ask_df.volume.sum() 
+        order_book_max  = bid_df.volume.sum() 
         if volume_to_move > order_book_max:
             print(('trade of {} amount results in {} of {} shares' +  
             'which exceeds order book volume of {}').format(
@@ -90,10 +88,10 @@ def slippage_moment(ticker, order_type, amount):
                 )
             )
             print('Please make a smaller trade you dipshit!')
-        elif volume_to_move < ask_df.iloc[0].volume:
-            return (ask_df.iloc[0].price/curr_mkt_price)- 1 
+        elif volume_to_move < bid_df.iloc[0].volume:
+            return (bid_df.iloc[0].price/curr_mkt_price)- 1 
         else:
-            _orderbook_cleared = ask_df[(ask_df.cumul_volume < volume_to_move)]
+            _orderbook_cleared = bid_df[(bid_df.cumul_volume < volume_to_move)]
             _full_clear =  _orderbook_cleared.iloc[:-1]
             
             _final_price = _orderbook_cleared.iloc[-1]
