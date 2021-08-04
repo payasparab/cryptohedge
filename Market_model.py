@@ -30,13 +30,6 @@ def slippage_moment(ticker, order_type, amount):
     ask_df[['price', 'volume']] = ask_df[['price', 'volume']].astype('float') 
     bid_df[['price', 'volume']] = bid_df[['price', 'volume']].astype('float')   
 
-    ask_df['vw_price'] = ask_df.apply(
-            lambda x: (x.price.dot(x.volume))/(x.volume.sum())
-        )
-    bid_df['vw_price'] = bid_df.apply(
-            lambda x: (x.price.dot(x.volume))/(x.volume.sum())
-        )
-
     ask_df['timestamp'] = pd.to_datetime(ask_df['timestamp'].apply(
         lambda x: datetime.fromtimestamp(x)))
 
