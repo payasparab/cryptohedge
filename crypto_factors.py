@@ -1,6 +1,8 @@
+from datetime import time
 import pandas as pd
 import numpy as np
 from crypto_db import CryptoDB
+from tqdm import tqdm
 
 
 def calc_vm_price(coin, cdb=CryptoDB(),time='24H'): 
@@ -37,6 +39,28 @@ def calc_vm_price(coin, cdb=CryptoDB(),time='24H'):
         ['timestamp', 'currency']
     )
     return output
+
+
+def generate_returns_db(time_period='24H'): 
+    '''
+    Creates pystore returns for processing 
+    database. 
+    '''
+    cdb = CryptoDB()
+    to_collection = cdb.store.collection('returns')
+    coins = cdb.store.collection('transactions').list_items()
+    rets_dfs = []
+    for coin in tqdm(coins): 
+        _rets_df = calc_vm_price(coin, cdb, time_period)
+        rets_dfs.append(_rets_df)
+    
+    returns_df = pd.concat(rets_dfs)
+    returns_df = returns_df.reset_index()
+    returns_df = returns_df.dropna()
+    to_collection.write(time_period, returns_df, overwrite=True)
+
+    
+
 
 
 

@@ -134,16 +134,7 @@ class CryptoDB:
         self.data_load_fail = failed
         
 
-    def generate_returns_db(self): 
-        '''
-        Creates pystore returns for processing 
-        database. 
-        '''
-        from crypto_factors import calc_vm_price
-        to_collection = self.store.collection('returns')
-        coins = self.store.collection('transactions')
-
-
+        
         
 
 
@@ -183,11 +174,6 @@ class CryptoDB:
         data['cash'] = _pairs_cut['quote']
         '''
         return data
-    
-
-
-        
-
 
 if __name__ == '__main__': 
     cdb = CryptoDB()
