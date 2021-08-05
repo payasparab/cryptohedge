@@ -67,37 +67,56 @@ class CryptoDB:
         else:
             return _item.to_pandas(parse_dates=False)
     
-    def load_raw_data(self): 
+    def load_raw_data(self, currency='USD'): 
         '''
         Function to load all raw_data for transactions and load into 
         database. 
         '''
         files_lst = os.listdir(self.raw_data_path)
         files_lst = [f for f in files_lst if (
-                ('USD' in f) 
+                (currency in f) 
                 and ('USDT' not in  f) 
                 and ('USDC' not in f))] 
         failed = []
         for _file in tqdm(files_lst):
             try: 
                 _df = self._process_csv(_file)
-            except KeyError:
+            except (KeyError, FileNotFoundError):
                 failed.append(_file)
             
-            _df['crypto_name'] = _df.set_index('crypto').join(
-                                        self.assetcodes.asset_name
-                                    ).reset_index().asset_name
             
-            _cryptoname = _df.crypto_name.iloc[0]
-            _df['cash_name'] = _df.set_index('cash').join(
-                                        self.assetcodes.asset_name
-                                    ).reset_index().asset_name
+            x_add = [
+                # Currency pairs that need an X for some stupid ass reason
+                'ETCUSD', 'ETHUSD', 'LTCUSD', 'MLNUSD', 'REPUSD', 
+                'XBTUSD', 'XLMUSD', 'XMRUSD', 'XRPUSD', 'ZECUSD', 
+                'XTZUSD'
+            ] 
+            
+            z_add = [
+                # Currency pairs that need an X for some stupid ass reason
+                'EURUSD', 'GBPUSD' 
+            ]
+            pair_code = _df.pair_code.iloc[0]
+
+            if pair_code in x_add:
+                pair_code = 'X' + pair_code
+
+            if pair_code in z_add:
+                pair_code = 'Z' + pair_code 
+
+            _df['pair_code'] = pair_code
+            _df['cash'] = currency
+            _df['crypto'] = pair_code.replace(currency, '')
 
             
+            _cryptoname = _df.crypto.iloc[0]
+            _cryptoname_full = self.assetcodes.loc[_cryptoname].asset_name
+            _df['asset_name_full'] = _cryptoname_full
+ 
             try: 
                 self.store.collection(
                     'transactions').write(
-                            _cryptoname, _df, overwrite=True
+                            _cryptoname_full, _df, overwrite=True
                     )
             except:
                 failed.append('Pystore_fail: {}'.format(_file))
@@ -107,6 +126,20 @@ class CryptoDB:
         ))
         self.data_load_fail = failed
         
+
+    def generate_returns_db(self): 
+        '''
+        Creates pystore returns for processing 
+        database. 
+        '''
+        from crypto_factors import calc_vm_price
+        to_collection = self.store.collection('returns')
+        coins = self.store.collection('transactions')
+
+
+        
+
+
     def _process_csv(self, file_name): 
         '''
         Name: process_csv
@@ -123,18 +156,27 @@ class CryptoDB:
         # Pull in file #
         full_path = self.raw_data_path + '\\' + file_name
         pair_code = file_name[:-4]
+        
+
+
         cols = ['timestamp', 'price', 'volume']
         data = pd.read_csv(full_path, names=cols, header=None)
         data['pair_code'] = pair_code
         
         # Process Dates #
+        data['timestamp'] = pd.to_datetime(data['timestamp'].apply(
+                lambda x: datetime.fromtimestamp(x)))
 
         # Asset Code Processing #
+        #TODO : temporary knocking out asset codes to make life easier
+        '''
+        
         _pairs_cut = self.pairs.loc[pair_code]
         data['crypto'] = _pairs_cut['base']
         data['cash'] = _pairs_cut['quote']
+        '''
         return data
-        
+    
 
 
         

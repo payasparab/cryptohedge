@@ -41,6 +41,8 @@ def calc_vm_price(coin, cdb=CryptoDB(),time='24H'):
 
 
 
+
+
     
     
     
