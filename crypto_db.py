@@ -41,7 +41,7 @@ class CryptoDB:
         self.store = pystore.store('CryptoDB')
         self.pairs = self.kraken_api.get_tradable_asset_pairs()
         self.assetcodes = pd.read_csv('assetcode_key.csv').set_index('asset_code')
-
+        self.data_load_fail = None
 
     
     def load_raw_data(self): 
@@ -82,6 +82,7 @@ class CryptoDB:
         print('The following tickers failed: {}'.format(
             failed
         ))
+        self.data_load_fail = failed
         
     def _process_csv(self, file_name): 
         '''
@@ -105,14 +106,10 @@ class CryptoDB:
         
         # Process Dates #
 
-
-
         # Asset Code Processing #
         _pairs_cut = self.pairs.loc[pair_code]
         data['crypto'] = _pairs_cut['base']
         data['cash'] = _pairs_cut['quote']
-
-
         return data
         
 
