@@ -79,6 +79,11 @@ class CryptoDB:
                 and ('USDC' not in f))] 
         failed = []
         for _file in tqdm(files_lst):
+            ignores = ['REPV2']
+
+            if _file in ignores: 
+                continue
+            
             try: 
                 _df = self._process_csv(_file)
             except (KeyError, FileNotFoundError):
@@ -94,8 +99,10 @@ class CryptoDB:
             
             z_add = [
                 # Currency pairs that need an X for some stupid ass reason
-                'EURUSD', 'GBPUSD' 
+                'EURUSD', 'GBPUSD', 'AUDUSD'
             ]
+
+
             pair_code = _df.pair_code.iloc[0]
 
             if pair_code in x_add:
