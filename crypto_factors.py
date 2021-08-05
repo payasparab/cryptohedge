@@ -46,6 +46,7 @@ def generate_returns_db(time_period='24H'):
     Creates pystore returns for processing 
     database. 
     '''
+    #TODO : move this to 
     cdb = CryptoDB()
     to_collection = cdb.store.collection('returns')
     coins = cdb.store.collection('transactions').list_items()
@@ -59,13 +60,28 @@ def generate_returns_db(time_period='24H'):
     returns_df = returns_df.dropna()
     to_collection.write(time_period, returns_df, overwrite=True)
 
-    
+class CryptoRiskAnalyzer: 
+    def __init__(cdb=CryptoDB()):
+        self.cdb = cdb
+        self.rets_df = self.
 
 
+    def calc_rolling_vol(self, coins, benchmarks, lookback, index_freq): 
+        ''' 
+        
+        '''
+        
+        pass
 
+    def plot_rolling_vol(self, coins, benchmarks, lookback, index_freq): 
+        pass 
 
-
-
+    def calc_sharpe_table(self, coins, benchmarks, lookback, index_freq): 
+        '''
+        Outputs a table of Sharpe ratios for coins and benchmarks requested.
+        '''
+        
+        pass
 
     
     
