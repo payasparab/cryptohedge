@@ -132,9 +132,7 @@ class CryptoDB:
             failed
         ))
         self.data_load_fail = failed
-        
 
-        
         
 
 
@@ -174,6 +172,9 @@ class CryptoDB:
         data['cash'] = _pairs_cut['quote']
         '''
         return data
+    
+
+
 
 if __name__ == '__main__': 
     cdb = CryptoDB()
