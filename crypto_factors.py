@@ -4,7 +4,6 @@ import numpy as np
 from crypto_db import CryptoDB
 from tqdm import tqdm
 
-
 def calc_vm_price(coin, cdb=CryptoDB(),time='24H'): 
     '''
     Args: 
@@ -46,7 +45,7 @@ def generate_returns_db(time_period='24H'):
     Creates pystore returns for processing 
     database. 
     '''
-    #TODO : move this to 
+    #TODO : move this to crypto_db to keep all reads and writes in one place
     cdb = CryptoDB()
     to_collection = cdb.store.collection('returns')
     coins = cdb.store.collection('transactions').list_items()
@@ -61,9 +60,9 @@ def generate_returns_db(time_period='24H'):
     to_collection.write(time_period, returns_df, overwrite=True)
 
 class CryptoRiskAnalyzer: 
-    def __init__(cdb=CryptoDB()):
+    def __init__(self, cdb=CryptoDB()):
         self.cdb = cdb
-        self.rets_df = self.
+        self.rets_df = None
 
 
     def calc_rolling_vol(self, coins, benchmarks, lookback, index_freq): 
@@ -71,10 +70,16 @@ class CryptoRiskAnalyzer:
         
         '''
         
-        pass
+        
 
     def plot_rolling_vol(self, coins, benchmarks, lookback, index_freq): 
-        pass 
+        '''
+        coins : lst(str) : Cryptocurrencies to display 
+        benchmarks : lst(str) : Funds to benchmark against
+        lookback : int : num
+        index_freq : pd.Datetime Grouper : tracking time
+        ''' 
+
 
     def calc_sharpe_table(self, coins, benchmarks, lookback, index_freq): 
         '''
