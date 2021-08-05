@@ -79,7 +79,7 @@ class CryptoDB:
                 and ('USDC' not in f))] 
         failed = []
         for _file in tqdm(files_lst):
-            ignores = ['REPV2']
+            ignores = ['REPV2USD.csv', 'WAVESUSD.csv']
 
             if _file in ignores: 
                 continue
@@ -94,12 +94,12 @@ class CryptoDB:
                 # Currency pairs that need an X for some stupid ass reason
                 'ETCUSD', 'ETHUSD', 'LTCUSD', 'MLNUSD', 'REPUSD', 
                 'XBTUSD', 'XLMUSD', 'XMRUSD', 'XRPUSD', 'ZECUSD', 
-                'XTZUSD'
+                'XTZUSD', 'XDGUSD'
             ] 
             
             z_add = [
                 # Currency pairs that need an X for some stupid ass reason
-                'EURUSD', 'GBPUSD', 'AUDUSD'
+                'EURUSD', 'GBPUSD', 'AUDUSD', 'JPYUSD'
             ]
 
 
