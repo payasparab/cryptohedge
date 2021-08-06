@@ -5,20 +5,18 @@ import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 import pandas as pd
+from Market_model import crypto_slippage
 
 
 
 html_header="""
 <head>
-<title>PControlDB</title>
 <meta charset="utf-8">
 <meta name="keywords" content=" Crypto Dashboard, dashboard, management, EVA">
 <meta name="description" content="project control dashboard">
-<meta name="author" content="Larry Prato">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
-<h1 style="font-size:300%; color:#008080; font-family:Georgia"> CRYPTO DASHBOARD<br>
- <h2 style="color:#008080; font-family:Georgia"> Slippage</h3> <br>
+<h1 style="font-size:400%; color:#2F80ED; font-family:Georgia"> CRYPTO DASHBOARD<br>
+ <h2 style="color:#2F80ED; font-family:Georgia"> Slippage</h3> <br>
  <hr style= "  display: block;
   margin-top: 0.5em;
   margin-bottom: 0.5em;
@@ -38,41 +36,41 @@ data=pd.read_excel('curva.xlsx')
 
 html_card_header1="""
 <div class="card">
-  <div class="card-body" style="border-radius: 10px 10px 0px 0px; background: #eef9ea; padding-top: 5px; width: 350px;
+  <div class="card-body" style="border-radius: 10px 10px 0px 0px; background: #2F80ED; padding-top: 5px; width: 350px;
    height: 50px;">
-    <h3 class="card-title" style="background-color:#eef9ea; color:#008080; font-family:Georgia; text-align: center; padding: 0px 0;">Currency to Sell</h3>
+    <h3 class="card-title" style="background-color:#2F80ED; color:#FFFFFF; font-family:Georgia; text-align: center; padding: 0px 0;">Currency to Sell</h3>
   </div>
 </div>
 """
 html_card_footer1="""
 <div class="card">
-  <div class="card-body" style="border-radius: 0px 0px 10px 10px; background: #eef9ea; padding-top: 1rem;; width: 350px;
+  <div class="card-body" style="border-radius: 0px 0px 10px 10px; background: #2F80ED; padding-top: 1rem;; width: 350px;
    height: 50px;">
-    <p class="card-title" style="background-color:#eef9ea; color:#008080; font-family:Georgia; text-align: center; padding: 0px 0;">Baseline 46%</p>
+    <p class="card-title" style="background-color:#2F80ED; color:#2F80ED; font-family:Georgia; text-align: center; padding: 0px 0;">Baseline 46%</p>
   </div>
 </div>
 """
 html_card_header2="""
 <div class="card">
-  <div class="card-body" style="border-radius: 10px 10px 0px 0px; background: #eef9ea; padding-top: 5px; width: 350px;
+  <div class="card-body" style="border-radius: 10px 10px 0px 0px; background: #2F80ED; padding-top: 5px; width: 350px;
    height: 50px;">
-    <h3 class="card-title" style="background-color:#eef9ea; color:#008080; font-family:Georgia; text-align: center; padding: 0px 0;">Order Type</h3>
+    <h3 class="card-title" style="background-color:#2F80ED; color:#FFFFFF; font-family:Georgia; text-align: center; padding: 0px 0;">Order Type</h3>
   </div>
 </div>
 """
 html_card_footer2="""
 <div class="card">
-  <div class="card-body" style="border-radius: 0px 0px 10px 10px; background: #eef9ea; padding-top: 1rem;; width: 350px;
+  <div class="card-body" style="border-radius: 0px 0px 10px 10px; background: #FFFFFF; padding-top: 1rem;; width: 350px;
    height: 50px;">
-    <p class="card-title" style="background-color:#eef9ea; color:#008080; font-family:Georgia; text-align: center; padding: 0px 0;">Baseline 92.700</p>
+    <p class="card-title" style="background-color:#FFFFFF; color:#2F80ED; font-family:Georgia; text-align: center; padding: 0px 0;">Baseline 92.700</p>
   </div>
 </div>
 """
 html_card_header3="""
 <div class="card">
-  <div class="card-body" style="border-radius: 10px 10px 0px 0px; background: #eef9ea; padding-top: 5px; width: 350px;
+  <div class="card-body" style="border-radius: 10px 10px 0px 0px; background: #2F80ED; padding-top: 5px; width: 350px;
    height: 50px;">
-    <h3 class="card-title" style="background-color:#eef9ea; color:#008080; font-family:Georgia; text-align: center; padding: 0px 0;">Amount To Sell</h3>
+    <h3 class="card-title" style="background-color:#2F80ED; color:#FFFFFF; font-family:Georgia; text-align: center; padding: 0px 0;">Amount To Buy Or Sell</h3>
   </div>
 </div>
 """
@@ -92,10 +90,10 @@ with st.beta_container():
     with col2:
         st.markdown(html_card_header1, unsafe_allow_html=True)
 
-        disciplinas = ['AAVE', 'ADA', 'ALGO', 'ANKR', 'ANT', 'ATOM', 'AXS', 'BADGER', 'BAL', 'BAT', 'BCH', 'BNT', 'BTC', 'CHZ', 'COMP', 'CQT', 'CRV', 'CTSI', 'DAI', 'DASH', 'DOGE', 'DOT', 'ENJ', 'EOS', 'ETC', 'ETH', 'EWT', 'FIL', 'FLOW', 'GHST', 'GNO', 'GRT', 'ICX', 'KAR', 'KAVA', 'KEEP', 'KNC', 'KSM', 'LINK', 'LPT', 'LRC', 'LSK', 'LTC', 'MANA', 'MATIC', 'MINA', 'MKR', 'MLN', 'NANO', 'OCEAN', 'OGN', 'OMG', 'OXT', 'PAXG', 'PERP', 'QTUM', 'RARI', 'REN', 'REP', 'REPV2', 'SAND', 'SC', 'SNX', 'SOL', 'SRM', 'STORJ', 'SUSHI', 'TBTC', 'TRX', 'UNI', 'USDC', 'USDT', 'WAVES', 'WBTC', 'XLM', 'XMR', 'XRP', 'XTZ', 'YFI', 'ZEC', 'ZRX']
+        disciplinas = ['BTCUSD', 'AAVE', 'ADA', 'ALGO', 'ANKR', 'ANT', 'ATOM', 'AXS', 'BADGER', 'BAL', 'BAT', 'BCH', 'BNT', 'BTCUSD', 'CHZ', 'COMP', 'CQT', 'CRV', 'CTSI', 'DAI', 'DASH', 'DOGE', 'DOT', 'ENJ', 'EOS', 'ETC', 'ETH', 'EWT', 'FIL', 'FLOW', 'GHST', 'GNO', 'GRT', 'ICX', 'KAR', 'KAVA', 'KEEP', 'KNC', 'KSM', 'LINK', 'LPT', 'LRC', 'LSK', 'LTC', 'MANA', 'MATIC', 'MINA', 'MKR', 'MLN', 'NANO', 'OCEAN', 'OGN', 'OMG', 'OXT', 'PAXG', 'PERP', 'QTUM', 'RARI', 'REN', 'REP', 'REPV2', 'SAND', 'SC', 'SNX', 'SOL', 'SRM', 'STORJ', 'SUSHI', 'TBTC', 'TRX', 'UNI', 'USDC', 'USDT', 'WAVES', 'WBTC', 'XLM', 'XMR', 'XRP', 'XTZ', 'YFI', 'ZEC', 'ZRX']
 
 
-        selected_disc = st.selectbox(' Select currency', disciplinas)
+        selected_disc = st.selectbox('', disciplinas)
         html_br = """
         <br>
         """
@@ -106,9 +104,9 @@ with st.beta_container():
     with col4:
         st.markdown(html_card_header2, unsafe_allow_html=True)
 
-        order_types1 = ['Buy', 'Sell']
+        buy_sell = ["buy", "sell"]
 
-        selected_ordertypes = st.selectbox(' Select Order Type', order_types1)
+        buying_selling = st.selectbox('', buy_sell)
         html_br = """
         <br>
         """
@@ -120,7 +118,7 @@ with st.beta_container():
 
         st.markdown(html_card_header3, unsafe_allow_html=True)
 
-        number = st.number_input('Please enter amount to Buy or Sell')
+        number = st.number_input('')
 
     with col7:
         st.write("")
@@ -130,11 +128,12 @@ html_br="""
 st.markdown(html_br, unsafe_allow_html=True)
 
 
+
 html_card_header4="""
 <div class="card">
-  <div class="card-body" style="border-radius: 10px 10px 0px 0px; background: #eef9ea; padding-top: 5px; width: 250px;
+  <div class="card-body" style="border-radius: 10px 10px 0px 0px; background: #2F80ED; padding-top: 5px; width: 250px;
    height: 50px;">
-    <h4 class="card-title" style="background-color:#eef9ea; color:#008080; font-family:Georgia; text-align: center; padding: 10px 0;">Slippage</h4>
+    <h4 class="card-title" style="background-color:#2F80ED; color:#FFFFFF; font-family:Georgia; text-align: center; padding: 10px 0;">Slippage</h4>
   </div>
 </div>
 """
@@ -142,26 +141,11 @@ html_card_footer4="""
 <div class="card">
   <div class="card-body" style="border-radius: 0px 0px 10px 10px; background: #eef9ea; padding-top: 1rem;; width: 250px;
    height: 50px;">
-    <p class="card-title" style="background-color:#eef9ea; color:#008080; font-family:Georgia; text-align: center; padding: 0px 0;">Montly Value (%)</p>
+    <p class="card-title" style="background-color:#eef9ea; color:#008080; font-family:Georgia; text-align: center; padding: 0px 0;">Baseline 92.7</p>
   </div>
 </div>
 """
-html_card_header5="""
-<div class="card">
-  <div class="card-body" style="border-radius: 10px 10px 0px 0px; background: #eef9ea; padding-top: 5px; width: 250px;
-   height: 50px;">
-    <h4 class="card-title" style="background-color:#eef9ea; color:#008080; font-family:Georgia; text-align: center; padding: 10px 0;">Global Spend Hours</h4>
-  </div>
-</div>
-"""
-html_card_footer5="""
-<div class="card">
-  <div class="card-body" style="border-radius: 0px 0px 10px 10px; background: #eef9ea; padding-top: 1rem;; width: 250px;
-   height: 50px;">
-    <p class="card-title" style="background-color:#eef9ea; color:#008080; font-family:Georgia; text-align: center; padding: 0px 0;">Montly Relative Change (%)</p>
-  </div>
-</div>
-"""
+
 
 
 ### Block 2#########################################################################################
@@ -169,31 +153,14 @@ with st.beta_container():
     col1, col2, col3, col4, col5, col6, col7 = st.beta_columns([1,10,1,10,1,20,1])
     with col1:
         st.write("")
-    with col2:
+    with col4:
         st.markdown(html_card_header4, unsafe_allow_html=True)
 
-
-
-
-
-        x = ['Actual', 'Previous', 'Average', 'Planned']
-        y = [5.5, 4.2, 6.3, 8.5]
-        fig_m_prog = go.Figure([go.Bar(x=x, y=y, text=y, textposition='auto')])
-        fig_m_prog.update_layout(paper_bgcolor="#fbfff0", plot_bgcolor="#fbfff0",
-                                 font={'color': "#008080", 'family': "Arial"}, height=100, width=250,
-                                 margin=dict(l=15, r=1, b=4, t=4))
-        fig_m_prog.update_yaxes(title='y', visible=False, showticklabels=False)
-        fig_m_prog.update_traces(marker_color='#17A2B8', selector=dict(type='bar'))
-        st.plotly_chart(fig_m_prog)
-        st.markdown(html_card_footer4, unsafe_allow_html=True)
-    with col3:
-        st.write("")
-
-    with col5:
-        st.write("")
-
-    with col7:
-        st.write("")
+        a1 = crypto_slippage(selected_disc, buying_selling, number)
+        a1 = "{:.5%}".format(a1)
+        #a1 = crypto_slippage("BTCUSD", "buy", 100000)
+        #print(a1)
+        st.write(a1)
 
 html_br="""
 <br>
@@ -232,6 +199,12 @@ html_card_footer7="""
   </div>
 </div>
 """
+
+
+html_subtitlecorr = """
+<h2 style="color:#2F80ED; font-family:Georgia;"> Correlation Between Assets: </h2>
+"""
+st.markdown(html_subtitlecorr, unsafe_allow_html=True)
 
 ### Block 3#########################################################################################
 with st.beta_container():
@@ -280,34 +253,61 @@ with st.beta_container():
     with col5:
         st.write("")
     with col6:
-        y = data.loc[data.Activity_name == 'Total']
-        y = data.loc[data.Activity_name == 'Total']
-        fig_hh = go.Figure()
-        fig_hh.add_trace(go.Bar(
-            x=y['Date'],
-            y=y['Spend_Hours'],
-            name='Spend Hours',
-            marker_color='#FF4136'
-        ))
-        fig_hh.add_trace(go.Bar(
-            x=y['Date'],
-            y=y['Planned_Hours'],
-            name='Planned Hours',
-            marker_color='#17A2B8'
-        ))
-        fig_hh.update_layout(barmode='group', title={'text': 'Spend Hours vs Planned', 'x': 0.5}, paper_bgcolor="#fbfff0",
-                             plot_bgcolor="#fbfff0", font={'color': "#008080", 'family': "Georgia"}, height=250, width=540,
-                             legend=dict(orientation="h",
-                                         yanchor="top",
-                                         y=0.99,
-                                         xanchor="left",
-                                         x=0.01),
-                             margin=dict(l=5, r=1, b=1, t=25))
-        fig_hh.update_xaxes(showline=True, linewidth=1, linecolor='#F7F7F7', mirror=True, nticks=6, rangemode="tozero",
-                            showgrid=False, gridwidth=0.5, gridcolor='#F7F7F7')
-        fig_hh.update_yaxes(showline=True, linewidth=1, linecolor='#F7F7F7', mirror=True, nticks=10, rangemode="tozero",
-                            showgrid=False, gridwidth=0.5, gridcolor='#F7F7F7')
-        st.plotly_chart(fig_hh)
+        def time_series(runs):
+            """
+            plots a time series to compare pace and heart rate values over time,
+            with an adjustable range for the last month, last six months, year-to-date and all time
+            """
+            ts = runs.copy()
+            ts['pace_not_dt'] = ts['pace_in_sec'].apply(pace_plot)
+            ts['pace'] = ts['pace_not_dt'].apply(pace_to_dt)
+            ts.columns = ['Name', 'Upload ID', 'Distance', 'Moving Time', 'Avg speed', 'Max speed', 'Avg cadence',
+                          'Total elevation gain', 'Avg HR', 'Max HR', 'Date', 'Start time', 'Pace in sec',
+                          'Pace not dt', 'Pace']
+
+            fig = make_subplots(specs=[[{"secondary_y": True}]])
+            fig.add_trace(
+                go.Scatter(x=ts['Date'], y=ts['Avg HR'], name="Avg HR"),
+                secondary_y=True,
+            )
+
+            fig.add_trace(
+                go.Scatter(x=ts['Date'], y=ts['Max HR'], name="Max HR"),
+                secondary_y=True,
+            )
+
+            fig.add_trace(
+                go.Scatter(x=ts['Date'], y=ts['Pace'], name="Pace"),
+                secondary_y=False,
+            )
+
+            fig.update_xaxes(
+                title_text="Date",
+                rangeselector=dict(
+                    buttons=list([
+                        dict(count=1, label="1m", step="month", stepmode="backward"),
+                        dict(count=6, label="6m", step="month", stepmode="backward"),
+                        dict(count=1, label="YTD", step="year", stepmode="todate"),
+                        dict(count=1, label="1y", step="year", stepmode="backward"),
+                        dict(step="all")
+                    ])
+                )
+            )
+
+            fig.update_yaxes(title_text="Heart Rate", secondary_y=True)
+            fig.update_yaxes(title_text="Pace", secondary_y=False, autorange='reversed')
+
+            fig.update_layout(
+                title_text="Pace vs Heart rate trends",
+                template='plotly_white',
+                yaxis=dict(
+                    title='Pace',
+                    tickformat='%M:%S'
+                )
+            )
+
+            return fig
+
     with col7:
         st.write("")
 
@@ -389,243 +389,12 @@ html_table="""
   </tr>
 </table>
 """
-### Block 4#########################################################################################
-with st.beta_container():
-    col1, col2, col3 = st.beta_columns([12,1,12])
-    with col1:
-        st.markdown(html_table, unsafe_allow_html=True)
-    with col2:
-        st.write("")
-    with col3:
-        # *******Gantt Chart
-        df = pd.DataFrame([
-            dict(Disc="Civ", Start='2021-01-04', Finish='2021-08-10'),
-            dict(Disc="Mec", Start='2021-03-05', Finish='2021-09-15'),
-            dict(Disc="Pip", Start='2021-04-20', Finish='2021-11-30'),
-            dict(Disc="Ele", Start='2021-05-20', Finish='2021-12-05'),
-            dict(Disc="Ins", Start='2021-06-20', Finish='2021-12-20'),
-            dict(Disc="Com", Start='2021-07-20', Finish='2021-12-30')
-        ])
-        fig2 = px.timeline(df, x_start="Start", x_end="Finish", y='Disc')
-        fig2.update_yaxes(autorange="reversed")
-        fig2.update_layout(title={'text': "Main dates", 'x': 0.5}, plot_bgcolor="#eef9ea", paper_bgcolor="#eef9ea",
-                           font={'color': "#008080", 'family': "Georgia"}, height=340, width=550, margin=dict(
-                l=51, r=5, b=10, t=50))
-        fig2.update_traces(marker_color='#17A2B8', selector=dict(type='bar'))
-        st.plotly_chart(fig2)
-
-disciplinas= ["ZRX", "AAVE", "GHST", "ALGO", "ANKR", "ANT", "REP", "REPV2", "AXS", "BADGER", "BAL",	"BNT", "BAT", "BTC", "BCH",	"ADA", "CTSI", "LINK", "CHZ", "COMP", "ATOM", "CQT", "CRV",	"DAI", "DASH", "MANA", "DOGE", "EWT", "ENJ", "MLN", "EOS", "ETH", "ETC", "FIL", "FLOW",	"GNO", "ICX", "KAR", "KAVA", "KEEP", "KSM",	"KNC", "LSK", "LTC", "LPT",	"LRC", "MKR", "MINA", "XMR", "NANO", "OCEAN", "OMG", "OXT",	"OGN", "PAXG", "PERP",  "DOT",	"MATIC", "QTUM", "REN",	"RARI",	"XRP",	"SRM", "SC", "SOL",	"XLM",	"STORJ",	"SUSHI",	"SNX",	"TBTC",	"USDT",	"XTZ",	"GRT",	"SAND",	"TRX",	"UNI",	"USDC",	"WAVES",	"WBTC",	"YFI",	"ZEC"]
-
-selected_disc = st.selectbox(' Select discipline', disciplinas)
-html_br="""
-<br>
-"""
-st.markdown(html_br, unsafe_allow_html=True)
-
-html_card_header4="""
-<div class="card">
-  <div class="card-body" style="border-radius: 10px 10px 0px 0px; background: #eef9ea; padding-top: 10px; width: 250px;
-   height: 50px;">
-    <h5 class="card-title" style="background-color:#eef9ea; color:#008080; font-family:Georgia; text-align: center; padding: 5px 0;">Progress For Selected Discipline</h5>
-  </div>
-</div>
-"""
-html_card_footer4="""
-<div class="card">
-  <div class="card-body" style="border-radius: 0px 0px 10px 10px; background: #eef9ea; padding-top: 1rem;; width: 250px;
-   height: 50px;">
-    <p class="card-title" style="background-color:#eef9ea; color:#008080; font-family:Georgia; text-align: center; padding: 0px 0;">Montly Value (%)</p>
-  </div>
-</div>
-"""
-html_card_header5="""
-<div class="card">
-  <div class="card-body" style="border-radius: 10px 10px 0px 0px; background: #eef9ea; padding-top: 10px; width: 250px;
-   height: 50px;">
-    <h5 class="card-title" style="background-color:#eef9ea; color:#008080; font-family:Georgia; text-align: center; padding: 5px 0;">Spend Hours For Selected Discipline</h5>
-  </div>
-</div>
-"""
-html_card_footer5="""
-<div class="card">
-  <div class="card-body" style="border-radius: 0px 0px 10px 10px; background: #eef9ea; padding-top: 1rem;; width: 250px;
-   height: 50px;">
-    <p class="card-title" style="background-color:#eef9ea; color:#008080; font-family:Georgia; text-align: center; padding: 0px 0;">Montly Relative Change (%)</p>
-  </div>
-</div>
-"""
-
-
-### Block 5#########################################################################################
-with st.beta_container():
-    col1, col2, col3, col4, col5, col6, col7 = st.beta_columns([1,10,1,10,1,20,1])
-    with col1:
-        st.write("")
-    with col2:
-        st.markdown(html_card_header4, unsafe_allow_html=True)
-        x = ['Actual', 'Previous', 'Average', 'Planned']
-        y = [5.5, 4.2, 6.3, 8.5]
-        fig_m_prog = go.Figure([go.Bar(x=x, y=y, text=y, textposition='auto')])
-        fig_m_prog.update_layout(paper_bgcolor="#fbfff0", plot_bgcolor="#fbfff0",
-                                 font={'color': "#008080", 'family': "Arial"}, height=100, width=250,
-                                 margin=dict(l=15, r=1, b=4, t=4))
-        fig_m_prog.update_yaxes(title='y', visible=False, showticklabels=False)
-        fig_m_prog.update_traces(marker_color='#17A2B8', selector=dict(type='bar'))
-        st.plotly_chart(fig_m_prog)
-        st.markdown(html_card_footer4, unsafe_allow_html=True)
-    with col3:
-        st.write("")
-    with col4:
-        st.markdown(html_card_header5, unsafe_allow_html=True)
-        x = ['Δ vs Prev', 'Δ vs Aver', 'Δ vs Plan']
-        y = [10, 12, 8]
-        fig_m_hh = go.Figure([go.Bar(x=x, y=y, text=y, textposition='auto')])
-        fig_m_hh.update_layout(paper_bgcolor="#fbfff0", plot_bgcolor="#fbfff0",
-                               font={'color': "#008080", 'family': "Arial"}, height=100, width=250,
-                               margin=dict(l=15, r=1, b=1, t=1))
-        fig_m_hh.update_yaxes(title='y', visible=False, showticklabels=False)
-        fig_m_hh.update_traces(marker_color='#17A2B8', selector=dict(type='bar'))
-        st.plotly_chart(fig_m_hh)
-        st.markdown(html_card_footer5, unsafe_allow_html=True)
-    with col5:
-        st.write("")
-    with col6:
-        y = data.loc[data.Activity_name == 'Total']
-        # Create traces
-        fig3 = go.Figure()
-        fig3.add_trace(go.Scatter(x=y['Date'], y=y['Progress'],
-                                  mode='lines',
-                                  name='Progress',
-                                  marker_color='#FF4136'))
-        fig3.add_trace(go.Scatter(x=y['Date'], y=y['Baseline'],
-                                  mode='lines',
-                                  name='Baseline',
-                                  marker_color='#17A2B8'))
-        fig3.update_layout(title={'text': "Actual Progress vs Planned", 'x': 0.5}, paper_bgcolor="#fbfff0",
-                           plot_bgcolor="#fbfff0", font={'color': "#008080", 'size': 12, 'family': "Georgia"}, height=220,
-                           width=540,
-                           legend=dict(orientation="h",
-                                       yanchor="top",
-                                       y=0.99,
-                                       xanchor="left",
-                                       x=0.01),
-                           margin=dict(l=1, r=1, b=1, t=30))
-        fig3.update_xaxes(showline=True, linewidth=1, linecolor='#F7F7F7', mirror=True, nticks=6, rangemode="tozero",
-                          showgrid=False, gridwidth=0.5, gridcolor='#F7F7F7')
-        fig3.update_yaxes(showline=True, linewidth=1, linecolor='#F7F7F7', mirror=True, nticks=10, rangemode="tozero",
-                          showgrid=True, gridwidth=0.5, gridcolor='#F7F7F7')
-        fig3.layout.yaxis.tickformat = ',.0%'
-        st.plotly_chart(fig3)
-    with col7:
-        st.write("")
 
 html_br="""
 <br>
 """
 st.markdown(html_br, unsafe_allow_html=True)
 
-html_card_header6="""
-<div class="card">
-  <div class="card-body" style="border-radius: 10px 10px 0px 0px; background: #eef9ea; padding-top: 10px; width: 250px;
-   height: 50px;">
-    <h5 class="card-title" style="background-color:#eef9ea; color:#008080; font-family:Georgia; text-align: center; padding: 5px 0;">Cost Variance For Selected Discipline</h5>
-  </div>
-</div>
-"""
-html_card_footer6="""
-<div class="card">
-  <div class="card-body" style="border-radius: 0px 0px 10px 10px; background: #eef9ea; padding-top: 1rem;; width: 250px;
-   height: 50px;">
-    <p class="card-title" style="background-color:#eef9ea; color:#008080; font-family:Georgia; text-align: center; padding: 0px 0;">Montly Value </p>
-  </div>
-</div>
-"""
-html_card_header7="""
-<div class="card">
-  <div class="card-body" style="border-radius: 10px 10px 0px 0px; background: #eef9ea; padding-top: 5px; width: 250px;
-   height: 50px;">
-    <h5 class="card-title" style="background-color:#eef9ea; color:#008080; font-family:Georgia; text-align: center; padding: 8px 0;">Schedule Variance For Selected Discipline</h5>
-  </div>
-</div>
-"""
-html_card_footer7="""
-<div class="card">
-  <div class="card-body" style="border-radius: 0px 0px 10px 10px; background: #eef9ea; padding-top: 1rem;; width: 250px;
-   height: 50px;">
-    <p class="card-title" style="background-color:#eef9ea; color:#008080; font-family:Georgia; text-align: center; padding: 0px 0;">Montly Value</p>
-  </div>
-</div>
-"""
-html_card_header8="""
-<div class="card">
-  <div class="card-body" style="border-radius: 10px 10px 0px 0px; background: #eef9ea; padding-top: 5px; width: 550px;
-   height: 50px;">
-    <h5 class="card-title" style="background-color:#eef9ea; color:#008080; font-family:Georgia; text-align: center; padding: 10px 0;">Main Issues By Discipline</h5>
-  </div>
-</div>
-"""
-
-html_list="""
-<ul style="color:#008080; font-family:Georgia; font-size: 15px">
-  <li>Nulla volutpat aliquam velit</li>
-  <li>Maecenas sed diam eget risus varius blandit</li>
-  <li>Etiam porta sem malesuada magna mollis euismod</li>
-  <li>Fusce dapibus, tellus ac cursus commodo</li>
-  <li>Maecenas sed diam eget risus varius blandit</li>
-</ul> 
-"""
-
-### Block 6#########################################################################################
-with st.beta_container():
-    col1, col2, col3, col4, col5, col6, col7 = st.beta_columns([1,10,1,10,1,20,1])
-    with col1:
-        st.write("")
-    with col2:
-        st.markdown(html_card_header6, unsafe_allow_html=True)
-        fig_cv = go.Figure(go.Indicator(
-            mode="gauge+number+delta",
-            value=1.05,
-            number={"font": {"size": 22, 'color': "#008080", 'family': "Arial"}, "valueformat": "#,##0"},
-            domain={'x': [0, 1], 'y': [0, 1]},
-            gauge={
-                'axis': {'range': [None, 1.5], 'tickwidth': 1, 'tickcolor': "black"},
-                'bar': {'color': "#06282d"},
-                'bgcolor': "white",
-                'steps': [
-                    {'range': [0, 1], 'color': '#FF4136'},
-                    {'range': [1, 1.5], 'color': '#3D9970'}]}))
-
-        fig_cv.update_layout(paper_bgcolor="#fbfff0", font={'color': "#008080", 'family': "Arial"}, height=135, width=250,
-                             margin=dict(l=10, r=10, b=15, t=20))
-        st.plotly_chart(fig_cv)
-        st.markdown(html_card_footer6, unsafe_allow_html=True)
-    with col3:
-        st.write("")
-    with col4:
-        st.markdown(html_card_header7, unsafe_allow_html=True)
-        fig_sv = go.Figure(go.Indicator(
-            mode="gauge+number+delta",
-            value=0.95,
-            number={"font": {"size": 22, 'color': "#008080", 'family': "Arial"}, "valueformat": "#,##0"},
-            domain={'x': [0, 1], 'y': [0, 1]},
-            gauge={
-                'axis': {'range': [None, 1.5], 'tickwidth': 1, 'tickcolor': "black"},
-                'bar': {'color': "#06282d"},
-                'bgcolor': "white",
-                'steps': [
-                    {'range': [0, 1], 'color': '#FF4136'},
-                    {'range': [1, 1.5], 'color': '#3D9970'}]}))
-        fig_sv.update_layout(paper_bgcolor="#fbfff0", font={'color': "#008080", 'family': "Arial"}, height=135, width=250,
-                             margin=dict(l=10, r=10, b=15, t=20))
-        st.plotly_chart(fig_sv)
-        st.markdown(html_card_footer7, unsafe_allow_html=True)
-    with col5:
-        st.write("")
-    with col6:
-        st.markdown(html_card_header8, unsafe_allow_html=True)
-        st.markdown(html_list, unsafe_allow_html=True)
-    with col7:
-        st.write("")
 
 html_line="""
 <br>
@@ -639,7 +408,6 @@ html_line="""
   margin-right: auto;
   border-style: inset;
   border-width: 1.5px;">
-<p style="color:Gainsboro; text-align: right;">By: larryprato@gmail.com</p>
 """
 st.markdown(html_line, unsafe_allow_html=True)
 
