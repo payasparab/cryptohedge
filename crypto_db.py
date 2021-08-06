@@ -79,6 +79,11 @@ class CryptoDB:
                 and ('USDC' not in f))] 
         failed = []
         for _file in tqdm(files_lst):
+            ignores = ['REPV2USD.csv', 'WAVESUSD.csv']
+
+            if _file in ignores: 
+                continue
+            
             try: 
                 _df = self._process_csv(_file)
             except (KeyError, FileNotFoundError):
@@ -89,13 +94,15 @@ class CryptoDB:
                 # Currency pairs that need an X for some stupid ass reason
                 'ETCUSD', 'ETHUSD', 'LTCUSD', 'MLNUSD', 'REPUSD', 
                 'XBTUSD', 'XLMUSD', 'XMRUSD', 'XRPUSD', 'ZECUSD', 
-                'XTZUSD'
+                'XTZUSD', 'XDGUSD'
             ] 
             
             z_add = [
                 # Currency pairs that need an X for some stupid ass reason
-                'EURUSD', 'GBPUSD' 
+                'EURUSD', 'GBPUSD', 'AUDUSD', 'JPYUSD'
             ]
+
+
             pair_code = _df.pair_code.iloc[0]
 
             if pair_code in x_add:
@@ -125,17 +132,6 @@ class CryptoDB:
             failed
         ))
         self.data_load_fail = failed
-        
-
-    def generate_returns_db(self): 
-        '''
-        Creates pystore returns for processing 
-        database. 
-        '''
-        from crypto_factors import calc_vm_price
-        to_collection = self.store.collection('returns')
-        coins = self.store.collection('transactions')
-
 
         
 
@@ -178,8 +174,6 @@ class CryptoDB:
         return data
     
 
-
-        
 
 
 if __name__ == '__main__': 
