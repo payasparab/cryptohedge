@@ -90,7 +90,7 @@ def crypto_slippage(ticker, order_type, amount):
 
             _total_clear = pd.concat([_full_clear, _final_price.to_frame().T])
             exec_price = (_total_clear.price.dot(_total_clear.volume))/ _total_clear.volume.sum()
-            return ((exec_price/curr_mkt_price) - 1).abs()
+            return np.abs((exec_price/curr_mkt_price) - 1)
 
 
 
