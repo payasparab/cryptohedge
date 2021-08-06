@@ -113,7 +113,7 @@ def kraken_index(frequency, start_date=None, end_date=None):
     rets = cdb.store.collection('returns').item(frequency).to_pandas()
     rets = rets.set_index(['timestamp', 'currency'])
 
-    rets['traded_dollars'] = rets.wv_price.mul(rets.traded_volume)
+    rets['traded_dollars'] = rets.wv_price.shift(1).mul(rets.traded_volume.shift(1))
     vw_index = rets.reset_index().groupby('timestamp').apply(
         lambda x: ((x.traded_dollars/x.traded_dollars.sum()) * x.rets).sum()
     )
@@ -129,6 +129,13 @@ def kraken_index(frequency, start_date=None, end_date=None):
     return kraken_index
 
 def calculate_crypto_benchmarks(bms, frequency, start_date, end_date): 
+    '''
+    bms : lst(str) : cryptocurrencies to benchmark against 
+    frequency : pd.Datetime Grouper : how often portfolio will rebalance
+    start_date : str/datetime : starting point of index
+    end_date : str/datetime : ending point to index
+    '''
+    
     cdb = CryptoDB()
     rets = cdb.store.collection('returns').item(frequency).to_pandas()
     rets = rets.set_index(['timestamp', 'currency'])
@@ -145,7 +152,6 @@ def calculate_crypto_benchmarks(bms, frequency, start_date, end_date):
     rets = rets * 100
 
     return rets
-
 
 
 def calculate_market_benchmarks(bms=['SPY', 'AOR_AOM']): 
