@@ -103,7 +103,7 @@ class CryptoRiskAnalyzer:
         years = [1, 3, 5]
 
 
-def kraken_index(frequency):
+def kraken_index(frequency, start_date=None, end_date=None):
     cdb = CryptoDB()
     rets = cdb.store.collection('returns').item(frequency).to_pandas()
     rets = rets.set_index(['timestamp', 'currency'])
@@ -113,22 +113,26 @@ def kraken_index(frequency):
         lambda x: ((x.traded_dollars/x.traded_dollars.sum()) * x.rets).sum()
     )
 
-    vw_index = vw_index.cumsum() + 1
-    vw_index = vw_index * 100
+    if start_date is not None:
+        vw_index = vw_index[vw_index.index >= start_date]
+    if end_date is not None: 
+        vw_index = vw_index[vw_index.index <= end_date]
     
-    fig, axes = plt.subplots(nrows=2, ncols=1)
+    vw_index_out = vw_index.cumsum() + 1
+    vw_index_out = vw_index_out * 100
+    
+    return kraken_index
 
-
-    vw_index.cumsum().plot(ax=axes[0], title='Kraken Exchange Returns Index')
-
-    print('Number of cryptocurrencies on Kraken:')
-    rets.groupby('timestamp').rets.count().rolling(30).mean().plot(
-                    ax=axes[1], 
-                    title='Number of cryptocurrencies on Kraken'
-                )
-
-
-
+def calculate_benchmarks(bms=['SPY', 'AOR_AOM']): 
+    cdb = CryptoDB()
+    sfp_data = cdb.store.collection('sharadar_data').item('SFPadj').data
+    
+    benchmark = sfp_data[bms].compute().pct_change()
+    
+    stacked_bm = []
+    for col in benchmark.columns: 
+        _bm = benchmark[col]
+        _bm = _bm.to
 
         
         
