@@ -83,8 +83,8 @@ html_card_footer3="""
 </div>
 """
 ### Block 1#########################################################################################
-with st.beta_container():
-    col1, col2, col3, col4, col5, col6, col7 = st.beta_columns([1,15,1,15,1,15,1])
+with st.container():
+    col1, col2, col3, col4, col5, col6, col7 = st.columns([1,15,1,15,1,15,1])
     with col1:
         st.write("")
     with col2:
@@ -149,8 +149,8 @@ html_card_footer4="""
 
 
 ### Block 2#########################################################################################
-with st.beta_container():
-    col1, col2, col3, col4, col5, col6, col7 = st.beta_columns([1,10,1,10,1,20,1])
+with st.container():
+    col1, col2, col3, col4, col5, col6, col7 = st.columns([1,10,1,10,1,20,1])
     with col1:
         st.write("")
     with col4:
@@ -207,8 +207,8 @@ html_subtitlecorr = """
 st.markdown(html_subtitlecorr, unsafe_allow_html=True)
 
 ### Block 3#########################################################################################
-with st.beta_container():
-    col1, col2, col3, col4, col5, col6, col7 = st.beta_columns([1,10,1,10,1,20,1])
+with st.container():
+    col1, col2, col3, col4, col5, col6, col7 = st.columns([1,10,1,10,1,20,1])
     with col1:
         st.write("")
     with col2:
