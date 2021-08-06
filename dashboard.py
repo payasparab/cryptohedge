@@ -15,8 +15,8 @@ html_header="""
 <meta name="keywords" content=" Crypto Dashboard, dashboard, management, EVA">
 <meta name="description" content="project control dashboard">
 </head>
-<h1 style="font-size:500%; color:#2F80ED; font-family:Georgia"> CRYPTO DASHBOARD<br>
- <h2 style="font-size: 25%; color:#2F80ED; font-family:Georgia"> Slippage: occurs when an order is executed at a price higher or lower than quoted price</h3> <br>
+<h1 style="font-size:325%; color:#2F80ED; font-family:Georgia"> CRYPTO TRADING TRANSACTION COST TOOL<br>
+ <h2 style="font-size: 40%; color:#2F80ED; font-family:Georgia"> Slippage: occurs when an order is executed at a price higher or lower than quoted price</h3> <br>
  <hr style= "  display: block;
   margin-top: 0.5em;
   margin-bottom: 0.5em;
