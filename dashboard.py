@@ -15,8 +15,8 @@ html_header="""
 <meta name="keywords" content=" Crypto Dashboard, dashboard, management, EVA">
 <meta name="description" content="project control dashboard">
 </head>
-<h1 style="font-size:400%; color:#2F80ED; font-family:Georgia"> CRYPTO DASHBOARD<br>
- <h2 style="color:#2F80ED; font-family:Georgia"> Slippage</h3> <br>
+<h1 style="font-size:500%; color:#2F80ED; font-family:Georgia"> CRYPTO DASHBOARD<br>
+ <h2 style="font-size: 25%; color:#2F80ED; font-family:Georgia"> Slippage: occurs when an order is executed at a price higher or lower than quoted price</h3> <br>
  <hr style= "  display: block;
   margin-top: 0.5em;
   margin-bottom: 0.5em;
@@ -202,7 +202,7 @@ html_card_footer7="""
 
 
 html_subtitlecorr = """
-<h2 style="color:#2F80ED; font-family:Georgia;"> Correlation Between Assets: </h2>
+<h2 style="color:#2F80ED; font-family:Georgia;"> Heatmap Showing Correlation Between Different Assets </h2>
 """
 st.markdown(html_subtitlecorr, unsafe_allow_html=True)
 
@@ -213,22 +213,20 @@ with st.beta_container():
         st.write("")
     with col2:
         st.markdown(html_card_header6, unsafe_allow_html=True)
-        fig_cv = go.Figure(go.Indicator(
-            mode="gauge+number+delta",
-            value=1.05,
-            number={"font": {"size": 22, 'color': "#008080", 'family': "Arial"}, "valueformat": "#,##0"},
-            domain={'x': [0, 1], 'y': [0, 1]},
-            gauge={
-                'axis': {'range': [None, 1.5], 'tickwidth': 1, 'tickcolor': "black"},
-                'bar': {'color': "#06282d"},
-                'bgcolor': "white",
-                'steps': [
-                    {'range': [0, 1], 'color': '#FF4136'},
-                    {'range': [1, 1.5], 'color': '#3D9970'}]}))
 
-        fig_cv.update_layout(paper_bgcolor="#fbfff0", font={'color': "#008080", 'family': "Arial"}, height=135, width=250,
-                             margin=dict(l=10, r=10, b=15, t=20))
-        st.plotly_chart(fig_cv)
+        x_axis = st.selectbox("Choose x axis", options=Data_to_select_indexed.index.names)
+        y_axis = st.selectbox("Choose y axis", options=Data_to_select_indexed.index.names)
+
+        # Pivot table
+        Pivot_data = Data_to_select_indexed.pivot_table(index=x_axis, columns=y_axis, values=data_to_analyse)
+
+        f, ax2 = plt.subplots(figsize=(12, 7))
+        # show data
+        ax2 = sns.heatmap(Pivot_data, linecolor="white", yticklabels=y_axis, xticklabels=x_axis, cmap="Blues",
+                            vmin=0.9, vmax=1.65, linewidth=0.3)
+        st.write(ax2)
+        st.pyplot()
+
         st.markdown(html_card_footer6, unsafe_allow_html=True)
     with col3:
         st.write("")
