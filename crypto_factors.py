@@ -104,6 +104,11 @@ class CryptoRiskAnalyzer:
 
 
 def kraken_index(frequency, start_date=None, end_date=None):
+    '''
+    frequency : pd.Datetime Grouper : how often portfolio will rebalance
+    start_date : str/datetime : starting point of index
+    end_date : str/datetime : ending point to index
+    '''
     cdb = CryptoDB()
     rets = cdb.store.collection('returns').item(frequency).to_pandas()
     rets = rets.set_index(['timestamp', 'currency'])
@@ -123,7 +128,27 @@ def kraken_index(frequency, start_date=None, end_date=None):
     
     return kraken_index
 
-def calculate_benchmarks(bms=['SPY', 'AOR_AOM']): 
+def calculate_crypto_benchmarks(bms, frequency, start_date, end_date): 
+    cdb = CryptoDB()
+    rets = cdb.store.collection('returns').item(frequency).to_pandas()
+    rets = rets.set_index(['timestamp', 'currency'])
+
+    rets = rets.rets.unstack()[bms]
+    rets = rets.fillna(0)
+
+    if start_date is not None:
+        rets = rets[rets.index >= start_date]
+    if end_date is not None: 
+        rets = rets[rets.index <= end_date]
+    
+    rets = rets.cumsum() + 1
+    rets = rets * 100
+
+    return rets
+
+
+
+def calculate_market_benchmarks(bms=['SPY', 'AOR_AOM']): 
     cdb = CryptoDB()
     sfp_data = cdb.store.collection('sharadar_data').item('SFPadj').data
     
