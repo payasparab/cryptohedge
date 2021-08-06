@@ -16,11 +16,17 @@ def crypto_slippage(ticker, order_type, amount):
     if order_type not in ['buy', 'sell']:
         raise ValueError('Order type arg {} is invalid'.format(order_type))
 
-    
+    if ticker == 'ANT': 
+        ticker = 'ANTUSD'
+        _assetcode = 'ANTUSD'
+
     resp = requests.get('https://api.kraken.com/0/public/Depth?pair={}'.format(ticker))
     response = resp.json()
 
-    _assetcode = 'XXBTZUSD' #TODO temporary hard code need to map to asset codes csv
+    #TODO temporary hard code need to map to asset codes csv
+    if ticker == 'BTCUSD':
+        _assetcode = 'XXBTZUSD' 
+    
     asks = response['result'][_assetcode]['asks']
     bids = response['result'][_assetcode]['bids']
 
@@ -54,7 +60,7 @@ def crypto_slippage(ticker, order_type, amount):
                     order_book_max
                 )
             )
-            print('Please make a smaller trade you dipshit!')
+            return (max(ask_df.price)/curr_mkt_price) -1 
         elif volume_to_move < ask_df.iloc[0].volume:
             return (ask_df.iloc[0].price/curr_mkt_price) - 1 
         else:
@@ -79,9 +85,9 @@ def crypto_slippage(ticker, order_type, amount):
                     order_book_max
                 )
             )
-            print('Please make a smaller trade you dipshit!')
+            return (min(bid_df.price)/curr_mkt_price) - 1
         elif volume_to_move < bid_df.iloc[0].volume:
-            return (bid_df.iloc[0].price/curr_mkt_price)- 1 
+            return np.abs((bid_df.iloc[0].price/curr_mkt_price)- 1)
         else:
             _full_clear = bid_df[(bid_df.cumul_volume < volume_to_move)]
             
