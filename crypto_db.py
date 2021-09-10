@@ -98,7 +98,7 @@ class CryptoDB:
             ] 
             
             z_add = [
-                # Currency pairs that need an X for some stupid ass reason
+                # Currency pairs that need a Z for some stupid ass reason
                 'EURUSD', 'GBPUSD', 'AUDUSD', 'JPYUSD'
             ]
 
