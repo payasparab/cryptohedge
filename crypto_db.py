@@ -133,7 +133,11 @@ class CryptoDB:
         ))
         self.data_load_fail = failed
 
-        
+    def dbmap(self):
+        print('CryptoDB ', '\n  ', self.pystore_path, '\n')
+        for i in self.store.list_collections():
+            print('   Collection:', i)
+            print('      Items: ', self.store.collection(i).items)
 
 
     def _process_csv(self, file_name): 
