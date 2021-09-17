@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 
 
-def calc_vm_price(coin, cdb=CryptoDB(),time='24H'): 
+def calc_vm_price(coin, cdb=CryptoDB(), time='24H'): 
     '''
     Args: 
         - coin : str : currency pair/name
@@ -62,47 +62,6 @@ def generate_returns_db(time_period='24H'):
     returns_df = returns_df.dropna()
     to_collection.write(time_period, returns_df, overwrite=True)
 
-class CryptoRiskAnalyzer: 
-    def __init__(self, cdb=CryptoDB()):
-        self.cdb = cdb
-        self.rets_collect = self.cdb.store.collection('returns')
-
-
-    def calc_rolling_vol(self, coins, lookback, index_freq): 
-        ''' 
-        coins : lst(str) : Cryptocurrencies to display 
-        benchmarks : lst(str) : Funds to benchmark against
-        lookback : int : num : how many periods for distribution
-        index_freq : pd.Datetime Grouper : tracking time for returns
-        '''
-        rets = self.rets_collect.item(index_freq).to_pandas().set_index(
-                            ['timestamp', 'currency']).rets
-        _rets = rets.unstack()[coins]
-        _vol = _rets.rolling(lookback).std().dropna()
-        print(_rets.dropna().describe())
-        _vol.plot(title='Annualized Volatility')
-        
-    '''
-    def what_time_to_trade(self):
-        rets = self.rets_collect.item('3H').to_pandas().set_index(
-                            ['timestamp', 'currency']).rets
-        
-        rets = rets.to_frame().reset_index()
-        
-        rets['hour'] = rets.timestamp.dt.hour
-    '''
-
-
-
-    def calc_sharpe_table(self, coins): 
-        '''
-        Outputs a table of Sharpe ratios for coins and benchmarks requested.
-        '''
-        rets = self.rets_collect.item('24H').to_pandas().set_index(
-                            ['timestamp', 'currency']).rets
-        years = [1, 3, 5]
-
-
 def kraken_index(frequency, start_date=None, end_date=None):
     '''
     frequency : pd.Datetime Grouper : how often portfolio will rebalance
@@ -126,7 +85,52 @@ def kraken_index(frequency, start_date=None, end_date=None):
     vw_index_out = vw_index.cumsum() + 1
     vw_index_out = vw_index_out * 100
     
-    return kraken_index
+    return vw_index
+
+
+'''
+class CryptoRiskAnalyzer: 
+    def __init__(self, cdb=CryptoDB()):
+        self.cdb = cdb
+        self.rets_collect = self.cdb.store.collection('returns')
+
+
+    def calc_rolling_vol(self, coins, lookback, index_freq): 
+         
+        coins : lst(str) : Cryptocurrencies to display 
+        benchmarks : lst(str) : Funds to benchmark against
+        lookback : int : num : how many periods for distribution
+        index_freq : pd.Datetime Grouper : tracking time for returns
+        
+        rets = self.rets_collect.item(index_freq).to_pandas().set_index(
+                            ['timestamp', 'currency']).rets
+        _rets = rets.unstack()[coins]
+        _vol = _rets.rolling(lookback).std().dropna()
+        print(_rets.dropna().describe())
+        _vol.plot(title='Annualized Volatility')
+        
+    
+    def what_time_to_trade(self):
+        rets = self.rets_collect.item('3H').to_pandas().set_index(
+                            ['timestamp', 'currency']).rets
+        
+        rets = rets.to_frame().reset_index()
+        
+        rets['hour'] = rets.timestamp.dt.hour
+    
+
+
+
+    def calc_sharpe_table(self, coins): 
+        # Outputs a table of Sharpe ratios for coins and benchmarks requested.
+
+        rets = self.rets_collect.item('24H').to_pandas().set_index(
+                            ['timestamp', 'currency']).rets
+        years = [1, 3, 5]
+
+'''
+
+
 
 def calculate_crypto_benchmarks(bms, frequency, start_date, end_date): 
     '''

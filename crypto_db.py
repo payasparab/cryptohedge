@@ -44,7 +44,7 @@ class CryptoDB:
         self.data_load_fail = None
 
 
-    def query(self, db, coin, return_dask=False):
+    def query(self, db, item, return_dask=False):
         '''
         Args: 
 
@@ -53,14 +53,17 @@ class CryptoDB:
         if db not in self.store.list_collections(): 
             print('Invalid collection argument'.format(db))
         
-        if coin in self.assetcodes.index: 
-            search_term = self.assetcodes.asset_name[coin]
-            _item = self.store.collection(db).item(search_term)
-        elif self.assetcodes.asset_name.str.contains(coin).any():
-            _item = self.store.collection(db).item(coin)
-        else: 
-            e_msg = 'Invalid coin argument: {}'.format(coin)
-            raise ValueError(e_msg)
+        
+        if db == 'transactions':
+            # Checks for coin raw data #
+            if item in self.assetcodes.index: 
+                search_term = self.assetcodes.asset_name[item]
+                _item = self.store.collection(db).item(search_term)
+            elif self.assetcodes.asset_name.str.contains(item).any():
+                _item = self.store.collection(db).item(item)
+            else: 
+                e_msg = 'Invalid coin argument: {}'.format(item)
+                raise ValueError(e_msg)
 
         if return_dask:
             return _item.data
