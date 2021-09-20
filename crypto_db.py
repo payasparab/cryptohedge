@@ -55,7 +55,7 @@ class CryptoDB:
         
         
         if db == 'transactions':
-            # Checks for coin raw data #
+            # Checks for coin raw data to be a valid coin #
             if item in self.assetcodes.index: 
                 search_term = self.assetcodes.asset_name[item]
                 _item = self.store.collection(db).item(search_term)
