@@ -159,7 +159,7 @@ class CryptoDB:
         # Pull in file #
         full_path = self.raw_data_path + '\\' + file_name
         pair_code = file_name[:-4]
-        
+            
 
 
         cols = ['timestamp', 'price', 'volume']
