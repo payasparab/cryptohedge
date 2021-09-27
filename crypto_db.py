@@ -15,7 +15,7 @@ class CryptoDB:
     Description: a pystore accessor database to quickly access time 
     series data for cryptocurrency portfolio optimization. 
     
-    Key Methods: 
+    Key Methods
 
         - dbmap : method to access information about items held in CryptoDB
         - query : access a Pystore item directly
