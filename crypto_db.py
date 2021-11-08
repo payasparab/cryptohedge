@@ -64,11 +64,15 @@ class CryptoDB:
             else: 
                 e_msg = 'Invalid coin argument: {}'.format(item)
                 raise ValueError(e_msg)
+        else: 
+            _item = self.store.collection('returns').item(item)
 
-            if return_dask:
-                return _item.data
-            else:
-                return _item.to_pandas(parse_dates=False)
+        if return_dask:
+            return _item.data
+        else:
+            return _item.to_pandas(parse_dates=False)
+
+        
     
     def load_raw_data(self, currency='USD'): 
         '''
